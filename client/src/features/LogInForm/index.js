@@ -81,7 +81,7 @@ function LogInForm(props) {
       <RegisterForm>
         <form onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
-            <h1>Cynthesia</h1>
+            <h1>Log In</h1>
           </div>
           <input
             type="text"
@@ -98,11 +98,8 @@ function LogInForm(props) {
           ></input>
 
           <button type="submit" onClick={handleSubmit}>
-            Login
+            Submit
           </button>
-          <span>
-            Don't have an account? Register
-          </span>
         </form>
       </RegisterForm>
       <ToastContainer />

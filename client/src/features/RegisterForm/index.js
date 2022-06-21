@@ -3,22 +3,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { loginRoute } from "utils/APIRoutes";
+import { registerRoute } from "utils/APIRoutes";
 import { FormContainer } from "features/styledComponents/FormContainer";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import {socket} from "utils/WebSocket"
 import { logIn } from "actions";
+import { connect } from "react-redux";
 
-const RegisterForm = styled(FormContainer)`
+const RegisterFormStyled = styled(FormContainer)`
   height: 100vh;
   width: 100vw;
 `;
 
-function Login(props) {
+function RegisterForm(props) {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     username: "",
+    email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const toastOptions = {
@@ -28,7 +31,6 @@ function Login(props) {
     draggable: true,
     theme: "dark",
   };
-
   useEffect(() => {
     if (localStorage.getItem("chat-app-user")) {
       navigate("/");
@@ -37,14 +39,17 @@ function Login(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
     if (handleValidation()) {
-      const { password, username } = values;
-      const { data } = await axios.post(loginRoute, {
+      const { password, username, email } = values;
+      const { data } = await axios.post(registerRoute, {
         username,
+        email,
         password,
       });
-
+      
       if (data.status === false) {
+        
         toast.error(data.msg, toastOptions);
       }
 
@@ -52,20 +57,31 @@ function Login(props) {
       if (data.status === true) {
         localStorage.setItem("chat-app-user", JSON.stringify(data.user));
         props.logIn(data.user)
-        navigate("/");
+        socket.emit("sign-in", data.user.username)
       }
     }
   };
 
   const handleValidation = () => {
-    const { password, username } = values;
+    const { password, confirmPassword, username, email } = values;
     
-
-    if (username.length === 0) {
-      toast.error("Username is required!", toastOptions);
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!", toastOptions);
       return false;
-    } else if (password.length === 0) {
-      toast.error("Password is required!", toastOptions);
+    } else if (username.length < 3) {
+      toast.error(
+        "Username length should be greater than 3 characters!",
+        toastOptions
+      );
+      return false;
+    } else if (password.length < 8) {
+      toast.error(
+        "Password length should be greater than 8 characters!",
+        toastOptions
+      );
+      return false;
+    } else if (email === "") {
+      toast.error("Email is required!", toastOptions);
       return false;
     }
     return true;
@@ -75,13 +91,14 @@ function Login(props) {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
 
+  
   return (
     <>
-      <RegisterForm>
+      <RegisterFormStyled>
         <form onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             {/* <img src={Logo} alt="Logo" /> */}
-            <h1>Cynthesia</h1>
+            <h1>Register</h1>
           </div>
           <input
             type="text"
@@ -89,28 +106,33 @@ function Login(props) {
             name="username"
             onChange={(e) => handleChange(e)}
           ></input>
-
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={(e) => handleChange(e)}
+          ></input>
           <input
             type="password"
             placeholder="Password"
             name="password"
             onChange={(e) => handleChange(e)}
           ></input>
-
+          <input
+            type="password"
+            placeholder="Confirm password"
+            name="confirmPassword"
+            onChange={(e) => handleChange(e)}
+          ></input>
           <button type="submit" onClick={handleSubmit}>
-            Login
+            Create User
           </button>
-          <span>
-            Don't have an account? <Link to="/register">Register</Link>
-          </span>
         </form>
-      </RegisterForm>
+      </RegisterFormStyled>
       <ToastContainer />
     </>
   );
 }
-
-
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -120,5 +142,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   null,
   mapDispatchToProps
-)(Login);
-
+)(RegisterForm);

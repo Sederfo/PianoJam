@@ -1,9 +1,7 @@
 import React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ErrorPage from "pages/ErrorPage";
-import Register from "pages/Register";
-import Login from "pages/Login";
 import "assets/styles/index.css";
 import PlayingPage from "pages/PlayingPage";
 import HomePage from "pages/HomePage";

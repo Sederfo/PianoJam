@@ -11,6 +11,8 @@ import { logOut, logIn, logInGuest } from "actions";
 import LogInForm from "features/LogInForm";
 import { useSpring, animated } from "react-spring";
 import { socket } from "utils/WebSocket";
+import RegisterForm from "features/RegisterForm";
+import { maxHeight } from "@mui/system";
 
 function HomePage(props) {
   const centerButtonStyle = {
@@ -61,11 +63,13 @@ function HomePage(props) {
     } else {
       socket.emit("get-guest-id");
     }
+
     document.body.style.backgroundColor = "#EDE0D4";
   }, []);
 
   const handleLogOut = () => {
     localStorage.removeItem("chat-app-user");
+    props.logOut();
     socket.emit("sign-out");
     socket.emit("get-guest-id");
   };
@@ -89,7 +93,20 @@ function HomePage(props) {
               alignItems="center"
             >
               <Grid item xs style={{ textAlign: "left" }}>
-                <animated.div style={fadeFromLeft}>PianoJam</animated.div>
+                <animated.div style={fadeFromLeft}>
+                  <Grid container direction="row" justifyContent="left"
+              alignItems="center">
+                    <Grid item>
+                      <img
+                        src={
+                          process.env.PUBLIC_URL + "/res/images/drept_alb.png"
+                        }
+                        style={{ maxHeight: "20px", maxWidth: "20px", marginRight:"10px" }}
+                      />
+                    </Grid>
+                    <Grid item>PianoJam</Grid>
+                  </Grid>
+                </animated.div>
               </Grid>
               <Grid item xs={2} style={{ textAlign: "center" }}>
                 <Grid
@@ -115,6 +132,11 @@ function HomePage(props) {
                       <ModalComponent
                         text="Sign in"
                         component={<LogInForm />}
+                      ></ModalComponent>
+
+                      <ModalComponent
+                        text="Register"
+                        component={<RegisterForm />}
                       ></ModalComponent>
                     </animated.div>
                   </Grid>
