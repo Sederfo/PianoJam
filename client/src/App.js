@@ -5,6 +5,7 @@ import ErrorPage from "pages/ErrorPage";
 import "assets/styles/index.css";
 import PlayingPage from "pages/PlayingPage";
 import HomePage from "pages/HomePage";
+import MidiTest from "MidiTest";
 
 
 const theme = createTheme({
@@ -36,6 +37,7 @@ function App() {
             </Routes>
         </ThemeProvider>
     </Router>
+    // <MidiTest/>
   );
 }
 

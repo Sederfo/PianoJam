@@ -49,7 +49,11 @@ function Keyboard(props) {
     // Anything in here is fired on component mount.
     props.setNotePositions(notePositions);
 
-    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+    try{
+    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);}
+    catch (error){
+      console.error(error)
+    }
 
     props.setRoomId(props.roomId);
 
